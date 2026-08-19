@@ -1,7 +1,7 @@
-# PRJ_495: Mental Health Support Chatbot (Aura AI)
+﻿# PRJ_495: Mental Health Support Chatbot (Aura AI)
 **NLP & Generative AI for UN Sustainable Development Goal 3: Good Health and Well-being**
 
-A full-stack, empathetic mental health guidance companion and emotional well-being platform built with **FastAPI**, **NLP Sentiment & Emotion Classifiers**, **Cognitive Behavioral Therapy (CBT) Nudges**, **Standardized Clinical Assessments (PHQ-9 & GAD-7)**, **Paced Box Breathing**, and **24/7 Crisis Safety Interceptors**.
+A full-stack, empathetic mental health guidance companion and emotional well-being platform built with **FastAPI**, **React + Vite + Tailwind CSS**, **NLP Sentiment & Emotion Classifiers**, **Cognitive Behavioral Therapy (CBT) Nudges**, **Standardized Clinical Assessments (PHQ-9 & GAD-7)**, **Paced Box Breathing**, and **24/7 Crisis Safety Interceptors**.
 
 ---
 
@@ -39,20 +39,39 @@ A full-stack, empathetic mental health guidance companion and emotional well-bei
 
 ---
 
-## 🚀 Quick Start Guide
+## ⚡ Quick Run (1-Click Drag & Drop)
+
+### On Windows:
+Double-click `start.bat` (or drag & drop the folder into a terminal). It will automatically install requirements, build the frontend, and open:
+👉 **http://127.0.0.1:8000**
+
+### On Linux / macOS:
+```bash
+chmod +x start.sh
+./start.sh
+```
+
+---
+
+## 🚀 Running via Command Line
 
 ### 1. Unified Single-Command Launch (Recommended)
 Run the application with the pre-built modern React frontend served directly by FastAPI:
 ```bash
+# 1. Install dependencies
+pip install -r backend/requirements.txt
+cd frontend && npm install && npm run build && cd ..
+
+# 2. Start Unified Server
 python run.py
 ```
 Open your browser at:
-👉 **http://127.0.0.1:8000** (Full Interactive App)  
-👉 **http://127.0.0.1:8000/docs** (FastAPI Swagger Interactive Docs)
+- 👉 **http://127.0.0.1:8000** (Full Interactive App)  
+- 👉 **http://127.0.0.1:8000/docs** (FastAPI Swagger Interactive Docs)
 
 ---
 
-### 2. Development Mode (Separate Frontend & Backend)
+### 2. Development Mode (Hot-Reload)
 
 #### Start Backend:
 ```bash
@@ -60,7 +79,7 @@ cd backend
 python -m uvicorn app.main:app --reload --port 8000
 ```
 
-#### Start Frontend (Vite Hot-Reload):
+#### Start Frontend:
 ```bash
 cd frontend
 npm run dev
@@ -68,13 +87,53 @@ npm run dev
 
 ---
 
+## 🐳 Docker Deployment
+
+Run the complete full-stack container with one command:
+```bash
+docker compose up --build
+```
+Access the application at `http://localhost:8000`.
+
+---
+
+## ☁️ Cloud Deployment Guides
+
+### Option A: Deploy on Render.com (1-Click / Free Tier)
+1. Push this repository to your GitHub account.
+2. In [Render Dashboard](https://dashboard.render.com/), select **New +** → **Web Service** and choose your repository.
+3. Configure settings:
+   - **Environment**: `Python 3`
+   - **Build Command**: `cd frontend && npm install && npm run build && cd ../backend && pip install -r requirements.txt`
+   - **Start Command**: `python run.py`
+4. Add environment variables:
+   - `GEMINI_API_KEY`: *(Optional, your Google Gemini API key)*
+   - `PYTHON_VERSION`: `3.11.9`
+5. Click **Create Web Service**.
+
+### Option B: Deploy with Docker on Railway / Cloud Run / Fly.io
+Deploy directly using the included multi-stage `Dockerfile`.
+
+---
+
 ## 🧪 Running Automated Tests
 
 Run backend unit tests for crisis interceptors, sentiment classification, PHQ-9/GAD-7 scoring, and API routes:
 ```bash
-cd backend
-python -m pytest tests/
+pytest backend/tests/
 ```
+
+---
+
+## 🔑 Environment Variables
+
+| Variable | Description | Default |
+| :--- | :--- | :--- |
+| `GEMINI_API_KEY` | Google Gemini API key from AI Studio | *(Optional - falls back to offline CBT engine)* |
+| `HOST` | Server host address | `0.0.0.0` |
+| `PORT` | Server port | `8000` |
+| `DATABASE_URL` | SQLite Database connection string | `sqlite+aiosqlite:///./mental_health.db` |
+| `ENVIRONMENT` | Environment mode (`development` or `production`) | `development` |
 
 ---
 

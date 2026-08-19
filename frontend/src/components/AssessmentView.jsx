@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import confetti from 'canvas-confetti';
+import { API_BASE_URL } from '../config';
 import {
   ClipboardList,
   CheckCircle,
@@ -30,7 +31,7 @@ export default function AssessmentView({ sessionId, onOpenCrisis }) {
   const fetchSchema = async (type) => {
     setLoading(true);
     try {
-      const res = await fetch(`http://127.0.0.1:8000/api/assessments/schema/${type}`);
+      const res = await fetch(`${API_BASE_URL}/api/assessments/schema/${type}`);
       if (res.ok) {
         const data = await res.json();
         setSchema(data);
@@ -46,7 +47,7 @@ export default function AssessmentView({ sessionId, onOpenCrisis }) {
 
   const fetchHistory = async () => {
     try {
-      const res = await fetch(`http://127.0.0.1:8000/api/assessments/${sessionId}`);
+      const res = await fetch(`${API_BASE_URL}/api/assessments/${sessionId}`);
       if (res.ok) {
         const data = await res.json();
         setHistory(data);
@@ -70,7 +71,7 @@ export default function AssessmentView({ sessionId, onOpenCrisis }) {
 
     setLoading(true);
     try {
-      const res = await fetch('http://127.0.0.1:8000/api/assessments', {
+      const res = await fetch(`${API_BASE_URL}/api/assessments`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

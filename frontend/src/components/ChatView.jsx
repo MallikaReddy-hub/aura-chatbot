@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { API_BASE_URL } from '../config';
 import {
   Send,
   Mic,
@@ -76,7 +77,7 @@ export default function ChatView({ apiKey, onOpenCrisis, sessionId }) {
 
   const fetchHistory = async () => {
     try {
-      const res = await fetch(`http://127.0.0.1:8000/api/chat/history/${sessionId}`);
+      const res = await fetch(`${API_BASE_URL}/api/chat/history/${sessionId}`);
       if (res.ok) {
         const data = await res.json();
         if (data.length > 0) {
@@ -118,7 +119,7 @@ export default function ChatView({ apiKey, onOpenCrisis, sessionId }) {
     setIsLoading(true);
 
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/chat', {
+      const response = await fetch(`${API_BASE_URL}/api/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

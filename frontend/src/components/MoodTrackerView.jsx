@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import confetti from 'canvas-confetti';
+import { API_BASE_URL } from '../config';
 import {
   SmilePlus,
   TrendingUp,
@@ -40,7 +41,7 @@ export default function MoodTrackerView({ sessionId }) {
 
   const fetchMoodLogs = async () => {
     try {
-      const res = await fetch(`http://127.0.0.1:8000/api/moods/${sessionId}`);
+      const res = await fetch(`${API_BASE_URL}/api/moods/${sessionId}`);
       if (res.ok) {
         const data = await res.json();
         setLogs(data.logs || []);
@@ -64,7 +65,7 @@ export default function MoodTrackerView({ sessionId }) {
     setIsSubmitting(true);
 
     try {
-      const res = await fetch('http://127.0.0.1:8000/api/moods', {
+      const res = await fetch(`${API_BASE_URL}/api/moods`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_BASE_URL } from '../config';
 import {
   BookOpen,
   Globe,
@@ -23,7 +24,7 @@ export default function ResourcesView({ onOpenCrisis }) {
   });
 
   useEffect(() => {
-    fetch('http://127.0.0.1:8000/api/resources')
+    fetch(`${API_BASE_URL}/api/resources`)
       .then((r) => r.json())
       .then((data) => setResources(data))
       .catch((err) => console.error(err));
