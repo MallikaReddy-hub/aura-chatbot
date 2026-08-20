@@ -77,7 +77,7 @@ def test_chat_generation_flow():
     res = generate_chat_response("I have been feeling stressed lately.")
     assert res["is_crisis"] is False
     assert len(res["response"]) > 20
-    assert res["source"] in ["cbt_empathy_engine", "gemini_ai"]
+    assert res["source"] in ["cbt_empathy_engine", "gemini_ai", "dynamic_nlp_engine"]
 
     # Crisis message response
     res_crisis = generate_chat_response("I want to commit suicide")

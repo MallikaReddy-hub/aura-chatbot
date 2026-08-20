@@ -15,10 +15,17 @@ from app.services.assessment_service import get_assessment_schema, score_phq9, s
 router = APIRouter()
 
 # --- Pydantic Request/Response Models ---
+class UserProfile(BaseModel):
+    name: Optional[str] = ""
+    focus_area: Optional[str] = "General Well-being & Mindfulness"
+    tone_preference: Optional[str] = "Empathetic & Supportive"
+    custom_goal: Optional[str] = ""
+
 class ChatRequest(BaseModel):
     message: str
     session_id: Optional[str] = "default_user"
     api_key: Optional[str] = None
+    user_profile: Optional[UserProfile] = None
 
 class MoodRequest(BaseModel):
     session_id: Optional[str] = "default_user"
@@ -55,11 +62,52 @@ async def chat_endpoint(req: ChatRequest, db: AsyncSession = Depends(get_db)):
         for rec in history_records
     ]
     
-    # Generate chat response
+    # Retrieve latest assessment and mood for clinical context
+    clinical_ctx = {}
+    try:
+        stmt_phq = (
+            select(AssessmentRecord)
+            .where(AssessmentRecord.session_id == req.session_id, AssessmentRecord.assessment_type == "PHQ-9")
+            .order_by(AssessmentRecord.created_at.desc())
+            .limit(1)
+        )
+        res_phq = await db.execute(stmt_phq)
+        latest_phq = res_phq.scalar_one_or_none()
+        if latest_phq:
+            clinical_ctx["latest_phq9"] = f"{latest_phq.severity} (Score: {latest_phq.total_score})"
+
+        stmt_gad = (
+            select(AssessmentRecord)
+            .where(AssessmentRecord.session_id == req.session_id, AssessmentRecord.assessment_type == "GAD-7")
+            .order_by(AssessmentRecord.created_at.desc())
+            .limit(1)
+        )
+        res_gad = await db.execute(stmt_gad)
+        latest_gad = res_gad.scalar_one_or_none()
+        if latest_gad:
+            clinical_ctx["latest_gad7"] = f"{latest_gad.severity} (Score: {latest_gad.total_score})"
+
+        stmt_mood = (
+            select(MoodLog)
+            .where(MoodLog.session_id == req.session_id)
+            .order_by(MoodLog.created_at.desc())
+            .limit(1)
+        )
+        res_mood = await db.execute(stmt_mood)
+        latest_mood = res_mood.scalar_one_or_none()
+        if latest_mood:
+            clinical_ctx["latest_mood"] = f"Mood score {latest_mood.mood_score}/5, Energy {latest_mood.energy_level}/5, Tags: {latest_mood.emotion_tags}"
+    except Exception:
+        pass
+
+    # Generate chat response based directly on user input
+    user_prof_dict = req.user_profile.dict() if req.user_profile else None
     response_data = generate_chat_response(
         user_text=req.message,
         conversation_history=formatted_history,
-        api_key_override=req.api_key
+        api_key_override=req.api_key,
+        user_profile=user_prof_dict,
+        clinical_context=clinical_ctx
     )
     
     # Save user message
